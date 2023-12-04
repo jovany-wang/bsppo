@@ -44,9 +44,11 @@ class PPO:
         self.eps = eps  # PPO中截断范围的参数
         self.device = device
 
-    def take_action(self, state):
-        state = torch.tensor([state], dtype=torch.float).to(self.device)
-        probs = self.actor(state)
+    def take_action(self, state, info):
+        # TODO: add info into model.
+        state = torch.tensor([state, info], dtype=torch.float).to(self.device)
+        embedding_state_and_wait_package_size = 
+        probs = self.actor(embedding_state_and_info)
         action_dist = torch.distributions.Categorical(probs)
         action = action_dist.sample()
         return action.item()
@@ -62,6 +64,7 @@ class PPO:
                                    dtype=torch.float).to(self.device)
         dones = torch.tensor(transition_dict['dones'],
                              dtype=torch.float).view(-1, 1).to(self.device)
+        infos = torch.tensor(transition_dict['dones'], ......)
         td_target = rewards + self.gamma * self.critic(next_states) * (1 -
                                                                        dones)
         td_delta = td_target - self.critic(states)

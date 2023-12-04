@@ -19,16 +19,11 @@ class BaseStationEnv(gym.Env):
             # N1-15
             # LSTM_user1, LSTM_user2, LSTM_user3, LSTM_user4, LSTM_user5）
         self.origin_obs_space = spaces.Tuple([
-            spaces.Discrete(1000) , # time. single value with type int
             spaces.MultiDiscrete([
                 [4, 3],
                 [4, 3],
                 [4, 3],
             ]), # states(work states and cover sizes) of 3 base stations.
-            spaces.MultiDiscrete([]),
-            # np.zeros(3), # waiting package size per base station
-            # np.zeros([3, 5]), # N0-N15
-            # np.zeros(5), # LSTM_user1-5
         ])
         self.origin_action_space = spaces.Dict({
             'base_stations_modes': spaces.MultiDiscrete([
@@ -49,11 +44,23 @@ class BaseStationEnv(gym.Env):
     def step(self, action):
         # 执行给定的动作，并返回新的观测、奖励、是否终止和其他信息
         # return observation, reward, done, info
-        return self.observation_space.sample(), 11, False, {}
+        info = {
+            'time': 0,
+            'waiting_package_sizes': np.zeros(3),
+            'random_nums': np.zeros(15),
+            'user_coming_package_sizes': np.zeros(5),
+        }
+        return self.observation_space.sample(), 11, False, info
 
     def reset(self):
         self.seed()
-        return self.observation_space.sample()
+        info = {
+            'time': 0,
+            'waiting_package_sizes': np.zeros(3),
+            'random_nums': np.zeros(15),
+            'user_coming_package_sizes': np.zeros(5),
+        }
+        return self.observation_space.sample(), info
 
     def render(self, mode='human'):
         pass
