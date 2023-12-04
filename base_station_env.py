@@ -19,7 +19,7 @@ class BaseStationEnv(gym.Env):
             # N1-15
             # LSTM_user1, LSTM_user2, LSTM_user3, LSTM_user4, LSTM_user5）
         self._state = spaces.Tuple([
-            # 0, # time. single value with type int
+            spaces.Discrete(1000) , # time. single value with type int
             spaces.MultiDiscrete([
                 [4, 3],
                 [4, 3],
