@@ -18,7 +18,7 @@ class BaseStationEnv(gym.Env):
             # waitpacketSizes0，waitpacketSizes1，waitpacketSizes2，
             # N1-15
             # LSTM_user1, LSTM_user2, LSTM_user3, LSTM_user4, LSTM_user5）
-        self._state = spaces.Tuple([
+        self.origin_obs_space = spaces.Tuple([
             spaces.Discrete(1000) , # time. single value with type int
             spaces.MultiDiscrete([
                 [4, 3],
@@ -30,9 +30,7 @@ class BaseStationEnv(gym.Env):
             # np.zeros([3, 5]), # N0-N15
             # np.zeros(5), # LSTM_user1-5
         ])
-
-        self.observation_space = self._state
-        self.action_space = spaces.Dict({
+        self.origin_action_space = spaces.Dict({
             'base_stations_modes': spaces.MultiDiscrete([
                 [4, 3],
                 [4, 3],
@@ -45,16 +43,17 @@ class BaseStationEnv(gym.Env):
                  ]), # A table that has 3 colums and 5 rows, with each value a binary number.
         })
 
-
+        self.observation_space = gym.spaces.utils.flatten_space(self.origin_obs_space)
+        self.action_space = gym.spaces.utils.flatten_space(self.origin_action_space)
 
     def step(self, action):
         # 执行给定的动作，并返回新的观测、奖励、是否终止和其他信息
         # return observation, reward, done, info
-        return self.observation_space, 11, False, {}
+        return self.observation_space.sample(), 11, False, {}
 
     def reset(self):
         self.seed()
-        return self.observation_space
+        return self.observation_space.sample()
 
     def render(self, mode='human'):
         pass
