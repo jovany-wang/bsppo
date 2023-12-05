@@ -46,8 +46,12 @@ class PPO:
 
     def take_action(self, state, info):
         # TODO: add info into model.
-        state = torch.tensor([state, info], dtype=torch.float).to(self.device)
-        embedding_state_and_wait_package_size = 
+        info_li = [info['time'], info['waiting_package_sizes'], info['random_nums'], info['user_coming_package_sizes']]
+        state = torch.tensor([state, info_li], dtype=torch.float).to(self.device)
+        print(f'=========state tensor==============')
+        print(state)
+        print(f'===========state tensor============')
+        # embedding_state_and_wait_package_size = 
         probs = self.actor(embedding_state_and_info)
         action_dist = torch.distributions.Categorical(probs)
         action = action_dist.sample()
@@ -64,7 +68,7 @@ class PPO:
                                    dtype=torch.float).to(self.device)
         dones = torch.tensor(transition_dict['dones'],
                              dtype=torch.float).view(-1, 1).to(self.device)
-        infos = torch.tensor(transition_dict['dones'], ......)
+        # infos = torch.tensor(transition_dict['dones'], ......)
         td_target = rewards + self.gamma * self.critic(next_states) * (1 -
                                                                        dones)
         td_delta = td_target - self.critic(states)

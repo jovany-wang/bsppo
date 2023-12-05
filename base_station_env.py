@@ -44,13 +44,17 @@ class BaseStationEnv(gym.Env):
     def step(self, action):
         # 执行给定的动作，并返回新的观测、奖励、是否终止和其他信息
         # return observation, reward, done, info
+        info = self.get_zero_info()
+        return self.observation_space.sample(), self._compute_reward(), False, info
+
+    def get_zero_info(self):
         info = {
             'time': 0,
             'waiting_package_sizes': np.zeros(3),
             'random_nums': np.zeros(15),
             'user_coming_package_sizes': np.zeros(5),
         }
-        return self.observation_space.sample(), self._compute_reward(), False, info
+        return info
 
     def reset(self):
         self.seed()
@@ -62,7 +66,7 @@ class BaseStationEnv(gym.Env):
             # The user coming package sizes for 5 users.
             'user_coming_package_sizes': np.zeros(5),
         }
-        return self.observation_space.sample(), info
+        return self.observation_space.sample(), self.get_zero_info()
 
     def render(self, mode='human'):
         pass
@@ -73,6 +77,20 @@ class BaseStationEnv(gym.Env):
     def _compute_reward(self):
         return 0
 
+    def get_state_dim(self):
+        state_dim = self.observation_space.shape[0]
+        zero_info = self.get_zero_info()
+        state_dim += 1 # time
+        state_dim += 3 # waiting package sizes for 3 base stations.
+        state_dim += 15 # 15 random numbers.
+        return state_dim
+
+    def get_action_dim(self):
+        return self.action_space.shape[0]
+
+    def seed(self, seed=None):
+        self.np_random, seed = seeding.np_random(seed)
+        return [seed]
 
 def main():
     env = gym.make('MyBaseStationEnv-v0')
