@@ -6,6 +6,21 @@ import base_station_env
 import rl_utils
 import matplotlib.pyplot as plt
 
+# TODO: changed to embedding.
+def _compute_state_dim(obs_space, info):
+    state_dim = obs_space.shape[0]
+    for key, value in obs_space.spaces.items():
+        if key == 'waiting_package_sizes':
+            state_dim += value.shape[0] 
+        elif key == 'random_nums':
+            state_dim += value.shape[0]
+        elif key == 'user_coming_package_sizes':
+            state_dim += value.shape[0]
+        elif key == 'connection_chooses':
+            state_dim += value.shape[0] * value.shape[1]
+        else:
+            raise ValueError('Unknown key: {}'.format(key))
+    return state_dim
 
 def main():
     actor_lr = 1e-3

@@ -50,14 +50,16 @@ class BaseStationEnv(gym.Env):
             'random_nums': np.zeros(15),
             'user_coming_package_sizes': np.zeros(5),
         }
-        return self.observation_space.sample(), 11, False, info
+        return self.observation_space.sample(), self._compute_reward(), False, info
 
     def reset(self):
         self.seed()
         info = {
             'time': 0,
+            # The waiting package sizes for 3 base stations.
             'waiting_package_sizes': np.zeros(3),
             'random_nums': np.zeros(15),
+            # The user coming package sizes for 5 users.
             'user_coming_package_sizes': np.zeros(5),
         }
         return self.observation_space.sample(), info
@@ -67,6 +69,9 @@ class BaseStationEnv(gym.Env):
 
     def close(self):
         pass
+
+    def _compute_reward(self):
+        return 0
 
 
 def main():
