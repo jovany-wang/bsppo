@@ -68,7 +68,7 @@ class PPO:
                                    dtype=torch.float).to(self.device)
         dones = torch.tensor(transition_dict['dones'],
                              dtype=torch.float).view(-1, 1).to(self.device)
-        # infos = torch.tensor(transition_dict['dones'], ......)
+        infos = torch.tensor(transition_dict['dones'], ......)
         td_target = rewards + self.gamma * self.critic(next_states) * (1 -
                                                                        dones)
         td_delta = td_target - self.critic(states)

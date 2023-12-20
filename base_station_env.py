@@ -3,7 +3,7 @@ from gym import spaces
 from gym.utils import seeding
 from gym.spaces import Dict, Discrete
 import numpy as np
-
+import action_space
 
 gym.envs.register(
     id="MyBaseStationEnv-v0", # 环境名
@@ -18,6 +18,14 @@ class BaseStationEnv(gym.Env):
             # waitpacketSizes0，waitpacketSizes1，waitpacketSizes2，
             # N1-15
             # LSTM_user1, LSTM_user2, LSTM_user3, LSTM_user4, LSTM_user5）
+
+        self._info = {
+             'time': 0,
+             'waiting_package_sizes': np.zeros(3),
+             'random_nums': np.zeros(15),
+             'LSTM_predict_user_data': np.zeros(5),
+             'BSmodel': np.zeros(3),
+        }
         self.time = 0  # 当前时间，每循环一次time+1，（单位：ms）
 
         self.BSmodel0 = 0  # 初始化三个BS的 work model
@@ -80,22 +88,36 @@ class BaseStationEnv(gym.Env):
         #          [2, 2, 2, 2, 2],
         #          ]), # A table that has 3 colums and 5 rows, with each value a binary number.
         # })
-        self.origin_action_space = action_space #从action_space.py文件中引入action_space变量
+        # action: [ BS0, BS1, BS2, BS0_cover_size, , , ] action -> value
+        # action_space: [0, 1, , ... 7000] action的全集合 7000 dim
+        # dim != 11, action_sapce.size()
+        self.origin_action_space = action_space.action_space #从action_space.py文件中引入action_space变量
         self.observation_space = gym.spaces.utils.flatten_space(self.origin_obs_space)
         self.action_space = gym.spaces.utils.flatten_space(self.origin_action_space)
 
     def step(self, action):
         # 执行给定的动作，并返回新的观测、奖励、是否终止和其他信息
         # return observation, reward, done, info
-         info = {
-            'time': 0,
-            'waiting_package_sizes': np.zeros(3),
-            'random_nums': np.zeros(15),
-            'LSTM_predict_user_data': np.zeros(5),
-            'BSmodel': np.zeros(3),
-        }
-
-        self.arrival_data_matrix0, self.arrival_data_matrix1, self.arrival_data_matrix2 = function.arrival_data_matrix(self.time,self.LSTM_user1,self.LSTM_user2,self.LSTM_user3,self.LSTM_user4,self.LSTM_user5,action,arrival_data_matrix0,arrival_data_matrix1,arrival_data_matrix2)
+        # info = {
+        #      'time': 0,
+        #      'waiting_package_sizes': np.zeros(3),
+        #      'random_nums': np.zeros(15),
+        #      'LSTM_predict_user_data': np.zeros(5),
+        #      'BSmodel': np.zeros(3),
+        # }
+         
+        self.arrival_data_matrix0, self.arrival_data_matrix1, self.arrival_data_matrix2 = function.arrival_data_matrix(
+             self.time,
+             self.LSTM_user1,
+             self.LSTM_user2,
+             self.LSTM_user3,
+             self.LSTM_user4,
+             self.LSTM_user5,
+             action,
+             self.arrival_data_matrix0,
+             self.arrival_data_matrix1,
+             self.arrival_data_matrix2,
+            )
         self.wait_packetSize0,self.wait_packetSize1, self.wait_packetSize2 = function.wait_packetSize(self.time,self.arrival_data_matrix0,self.arrival_data_matrix1,self.arrival_data_matrix2)
         self.H_15,trans_rate_list_user1, trans_rate_list_user2, trans_rate_list_user3, trans_rate_list_user4, trans_rate_list_user5 = function.trans_rate_15(self.action_space)
         trans_rate_BS0, trans_rate_BS1, trans_rate_BS2 = function.trans_rate_3BS(self.action_space,trans_rate_list_user1,trans_rate_list_user2,trans_rate_list_user3,trans_rate_list_user4,trans_rate_list_user5)
@@ -105,8 +127,8 @@ class BaseStationEnv(gym.Env):
         '''
         在这些状态转换完后，再把info的信息放在这里
         '''
-        info['time'] += 1  # 每与环境交互一次，时间就相应的+1
-        info['waiting_package_sizes'][0] = self.wait_packetSize0
+        self._info['time'] += 1  # 每与环境交互一次，时间就相应的+1
+        self._info['waiting_package_sizes'][0] = self.wait_packetSize0
         info['waiting_package_sizes'][1] = self.wait_packetSize1
         info['waiting_package_sizes'][2] = self.wait_packetSize2
         info['random_nums'] = self.H_15
@@ -132,13 +154,12 @@ class BaseStationEnv(gym.Env):
 
     def reset(self):
         self.seed()
-        info = {
-            'time': 0,
-            # The waiting package sizes for 3 base stations.
-            'waiting_package_sizes': np.zeros(3),
-            'random_nums': np.zeros(15),
-            # The user coming package sizes for 5 users.
-            'user_coming_package_sizes': np.zeros(5),
+        self._info = {
+             'time': 0,
+             'waiting_package_sizes': np.zeros(3),
+             'random_nums': np.zeros(15),
+             'LSTM_predict_user_data': np.zeros(5),
+             'BSmodel': np.zeros(3),
         }
         return self.observation_space.sample(), self.get_zero_info()
 
