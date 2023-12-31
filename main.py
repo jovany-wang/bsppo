@@ -42,7 +42,8 @@ def main():
     plt.ylabel('Returns')
     plt.title('PPO on {}'.format(env_name))
     plt.show()
-
+    #TODO 这里添加了：每循环一次time+1
+    Vars.time += 1
 
 if __name__ == '__main__':
     main()
