@@ -47,10 +47,10 @@ class PPO:
     #def take_action(self, state, info):
     def take_action(self, state):
         state = np.concatenate([
-        state['wait_packetSize'],
-        state['channel_state'],
-        state['LSTM_user'],
-        state['BSmodel']
+            state['wait_packetSize'],
+            state['channel_state'],
+            state['LSTM_user'],
+            state['BSmodel']
         ])
         # TODO: add info into model.
         # info_li = [info['time'], info['waiting_package_sizes'], info['random_nums'], info['user_coming_package_sizes']]
