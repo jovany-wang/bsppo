@@ -39,6 +39,9 @@ def train_on_policy_agent(env, agent, num_episodes):
                 while not done:
                     action = agent.take_action(state)
                     next_state, reward, done, info = env.step(action)
+                    #将next_state转换为numpy
+                    values_list = [value for key, values in next_state.items() for value in values]
+                    next_state_narray = np.array(values_list)
                     transition_dict['states'].append(state)
                     transition_dict['actions'].append(action)
                     transition_dict['next_states'].append(next_state)
