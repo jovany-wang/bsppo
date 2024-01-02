@@ -375,17 +375,29 @@ class BaseStationEnv(gym.Env):
     def _compute_reward(self):
         return 0
 
-    def get_state_dim(self):
-        # state_dim = self.observation_space.shape[0]
-        # zero_info = self.get_zero_info()
-        # state_dim += 1 # time
-        # state_dim += 3 # waiting package sizes for 3 base stations.
-        # state_dim += 15 # 15 random numbers.
-        # return state_dim
-        pass
+    # def get_state_dim(self):
+    #     # state_dim = self.observation_space.shape[0]
+    #     # zero_info = self.get_zero_info()
+    #     # state_dim += 1 # time
+    #     # state_dim += 3 # waiting package sizes for 3 base stations.
+    #     # state_dim += 15 # 15 random numbers.
+    #     # return state_dim
+    #     pass
 
+    # def get_action_dim(self):
+    #     return self.action_space.shape[0]
+    def get_state_dim(self):
+    state_dim = (
+            self.wait_packetSize_space.shape[0] +
+            self.channel_state_space.shape[0] +
+            sum(self.LSTM_user_space.nvec) +
+            sum(self.BSmodel_space.nvec)
+    )
+    return state_dim
+    #
     def get_action_dim(self):
-        return self.action_space.shape[0]
+        action_dim = self.action_space.n
+        return action_dim
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
