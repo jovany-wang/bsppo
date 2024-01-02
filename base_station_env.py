@@ -349,21 +349,18 @@ class BaseStationEnv(gym.Env):
 
     def reset(self):
         self.seed()
-        # info = {
-        #     'time': 0,
-        #     # The waiting package sizes for 3 base stations.
-        #     'waiting_package_sizes': np.zeros(3),
-        #     'random_nums': np.zeros(15),
-        #     # The user coming package sizes for 5 users.
-        #     'user_coming_package_sizes': np.zeros(5),
-        # }
-        # return self.observation_space.sample(), self.get_zero_info()
         self.observation = {
-        'wait_packetSize': np.zeros(15),
-        'channel_state': np.zeros(15),
-        'LSTM_user': np.zeros(10),
-        'BSmodel': np.zeros(4)
+            'wait_packetSize': np.zeros(15),
+            'channel_state': np.zeros(15),
+            'LSTM_user': np.zeros(10),
+            'BSmodel': np.zeros(4)
         }
+        flatten_observation = np.concatenate([
+            self.observation['wait_packetSize'],
+            self.observation['channel_state'],
+            self.observation['LSTM_user'],
+            self.observation['BSmodel']
+        ])
         return self.observation
 
     def render(self, mode='human'):
@@ -375,23 +372,12 @@ class BaseStationEnv(gym.Env):
     def _compute_reward(self):
         return 0
 
-    # def get_state_dim(self):
-    #     # state_dim = self.observation_space.shape[0]
-    #     # zero_info = self.get_zero_info()
-    #     # state_dim += 1 # time
-    #     # state_dim += 3 # waiting package sizes for 3 base stations.
-    #     # state_dim += 15 # 15 random numbers.
-    #     # return state_dim
-    #     pass
-
-    # def get_action_dim(self):
-    #     return self.action_space.shape[0]
     def get_state_dim(self):
     state_dim = (
             self.wait_packetSize_space.shape[0] +
             self.channel_state_space.shape[0] +
-            sum(self.LSTM_user_space.nvec) +
-            sum(self.BSmodel_space.nvec)
+            10 +
+            4
     )
     return state_dim
     #
