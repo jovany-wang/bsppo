@@ -47,7 +47,8 @@ def trans_rate_15(action):
     trans_rate_list_user3 = []
     trans_rate_list_user4 = []
     trans_rate_list_user5 = []
-    h_15 = []
+    # h_15 = []
+    h_15 = np.zeros([15])
     #user1
     #如action为[0,0,3,3,1,0,-1,-1,-1,-1,-1]
     #在这种情况下，action为一个user也没连接，但是此时不耽误BS为activate状态，因为即使没有用户时，BS也可以是action状态的
@@ -56,7 +57,8 @@ def trans_rate_15(action):
         for index,colu in enumerate(Vars.distance_matrix[0,:]):
             h = np.random.normal(loc=0, scale=1) / (colu**(Vars.alpha / 2))
             h_abs = np.abs(h)
-            h_15.append(h_abs)
+            # h_15.append(h_abs)
+            h_15[index] = h_abs
             h_squ =np.square(h_abs)
             if index == 0:#user1-BS0
                 if action[3] == 1:
@@ -99,7 +101,8 @@ def trans_rate_15(action):
         for row,colu in enumerate(Vars.distance_matrix[1,:]):
             h = np.random.normal(loc=0, scale=1) / (colu**(Vars.alpha / 2))
             h_abs = np.abs(h)
-            h_15.append(h_abs)
+            # h_15.append(h_abs)
+            h_15[row+2] = h_abs
             h_squ =np.square(h_abs)
             if row == 0:#user2-BS0
                 if action[3] == 1:
@@ -141,7 +144,8 @@ def trans_rate_15(action):
         for row,colu in enumerate(Vars.distance_matrix[2,:]):
             h = np.random.normal(loc=0, scale=1) / (colu**(Vars.alpha / 2))
             h_abs = np.abs(h)
-            h_15.append(h_abs)
+            # h_15.append(h_abs)
+            h_15[row+5] = h_abs
             h_squ =np.square(h_abs)
             if row == 0:#user3-BS0
                 if action[3] == 1:
@@ -183,7 +187,8 @@ def trans_rate_15(action):
         for row,colu in enumerate(Vars.distance_matrix[3,:]):
             h = np.random.normal(loc=0, scale=1) / (colu**(Vars.alpha / 2))
             h_abs = np.abs(h)
-            h_15.append(h_abs)
+            # h_15.append(h_abs)
+            h_15[row+8] = h_abs
             h_squ =np.square(h_abs)
             if row == 0:#user4-BS0
                 if action[3] == 1:
@@ -225,7 +230,8 @@ def trans_rate_15(action):
         for row,colu in enumerate(Vars.distance_matrix[4,:]):
             h = np.random.normal(loc=0, scale=1) / (colu**(Vars.alpha / 2))
             h_abs = np.abs(h)
-            h_15.append(h_abs)
+            # h_15.append(h_abs)
+            h_15[row+12] = h_abs
             h_squ =np.square(h_abs)
             if row == 0:#user4-BS0
                 if action[3] == 1:
