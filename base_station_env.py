@@ -362,7 +362,7 @@ class BaseStationEnv(gym.Env):
             self.observation['LSTM_user'],
             self.observation['BSmodel']
         ])
-        return self.observation
+        return flatten_observation
 
     def render(self, mode='human'):
         pass
