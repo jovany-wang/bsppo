@@ -374,13 +374,13 @@ class BaseStationEnv(gym.Env):
     #     return 0
 
     def get_state_dim(self):
-    state_dim = (
-            self.wait_packetSize_space.shape[0] +
-            self.channel_state_space.shape[0] +
-            10 +
-            4
-    )
-    return state_dim
+        state_dim = (
+                self.wait_packetSize_space.shape[0] +
+                self.channel_state_space.shape[0] +
+                10 +
+                4
+        )
+        return state_dim
     #
     def get_action_dim(self):
         action_dim = self.action_space.n
