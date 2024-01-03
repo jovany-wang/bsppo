@@ -51,7 +51,7 @@ class BaseStationEnv(gym.Env):
         '''
         1. 创建action_space
         '''
-        self.action_space = gym.spaces.Discrete(5036)
+        self.action_space = gym.spaces.Discrete(5135)
         '''
         2. 创建state_space
         '''
@@ -339,13 +339,14 @@ class BaseStationEnv(gym.Env):
         return self.observation,reward,done,info
 
     def get_zero_info(self):
-        info = {
-            'time': 0,
-            'waiting_package_sizes': np.zeros(3),
-            'random_nums': np.zeros(15),
-            'user_coming_package_sizes': np.zeros(5),
-        }
-        return info
+        # info = {
+        #     'time': 0,
+        #     'waiting_package_sizes': np.zeros(3),
+        #     'random_nums': np.zeros(15),
+        #     'user_coming_package_sizes': np.zeros(5),
+        # }
+        # return info
+        pass
 
     def reset(self):
         self.seed()
@@ -369,8 +370,8 @@ class BaseStationEnv(gym.Env):
     def close(self):
         pass
 
-    def _compute_reward(self):
-        return 0
+    # def _compute_reward(self):
+    #     return 0
 
     def get_state_dim(self):
     state_dim = (
@@ -393,11 +394,11 @@ def main():
     env = gym.make('MyBaseStationEnv-v0')
     observation = env.reset()
     # for _ in range(10):
-    for _ in range(3000):
+    for _ in range(10):
         action = env.action_space.sample()  # 随机选择一个动作
         observation, reward, done, info = env.step(action)
         env.render()
-        Vars.time += 1
+        # Vars.time += 1
         if done:
             observation = env.reset()
 
