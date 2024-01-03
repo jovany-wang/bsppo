@@ -46,12 +46,12 @@ class PPO:
 
     #def take_action(self, state, info):
     def take_action(self, state):
-        state = np.concatenate([
-            state['wait_packetSize'],
-            state['channel_state'],
-            state['LSTM_user'],
-            state['BSmodel']
-        ])
+        # state = np.concatenate([
+        #     state['wait_packetSize'],
+        #     state['channel_state'],
+        #     state['LSTM_user'],
+        #     state['BSmodel']
+        # ])
         # TODO: add info into model.
         # info_li = [info['time'], info['waiting_package_sizes'], info['random_nums'], info['user_coming_package_sizes']]
         # state = torch.tensor([state, info_li], dtype=torch.float).to(self.device)
@@ -63,40 +63,39 @@ class PPO:
         # probs = self.actor(embedding_state_and_info)
         probs = self.actor(state)
         action_dist = torch.distributions.Categorical(probs)
-                #TODO 根据某些条件，过滤动作
-        action_space_index_total = np.arange(1, 5135)  # 注意，这个应该是action的编号
-        if Vars.time == 0:  # 初始化第0和第1秒的数据，假设这两个好秒内，5个用户都没有数据到达
-            action_space_matrix = action_space_matrix
-            # user1
-            action_illegal_for_user1 = np.where(action_space_matrix[:, 6] != -1)[0]
-            action_space_index_legal_for_user1 = [num for num in action_space_index_total if num not in action_illegal_for_user1]
-            # user2
-            action_illegal_for_user2 = np.where(action_space_matrix[:, 7] != -1)[0]
-            action_space_index_legal_for_user2 = [num for num in action_space_index_legal_for_user1 if num not in action_illegal_for_user2]
-            # user3
-            action_illegal_for_user3 = np.where(action_space_matrix[:, 8] != -1)[0]
-            action_space_index_legal_for_user3 = [num for num in action_space_index_legal_for_user2 if num not in action_illegal_for_user3]
-            # user4
-            action_illegal_for_user4 = np.where(action_space_matrix[:, 9] != -1)[0]
-            action_space_index_legal_for_user4 = [num for num in action_space_index_legal_for_user3 if num not in action_illegal_for_user4]
-            # user5
-            action_illegal_for_user5 = np.where(action_space_matrix[:, 10] != -1)[0]
-            action_space_index_legal_for_user5 = [num for num in action_space_index_legal_for_user4 if num not in action_illegal_for_user5]
+        #TODO 根据某些条件，过滤动作
+        # action_space_index_total = np.arange(1, 5135)  # 注意，这个应该是action的编号
+        # if Vars.time == 0:  # 初始化第0和第1秒的数据，假设这两个好秒内，5个用户都没有数据到达
+        #     action_space_matrix = action_space_matrix
+        #     # user1
+        #     action_illegal_for_user1 = np.where(action_space_matrix[:, 6] != -1)[0]
+        #     action_space_index_legal_for_user1 = [num for num in action_space_index_total if num not in action_illegal_for_user1]
+        #     # user2
+        #     action_illegal_for_user2 = np.where(action_space_matrix[:, 7] != -1)[0]
+        #     action_space_index_legal_for_user2 = [num for num in action_space_index_legal_for_user1 if num not in action_illegal_for_user2]
+        #     # user3
+        #     action_illegal_for_user3 = np.where(action_space_matrix[:, 8] != -1)[0]
+        #     action_space_index_legal_for_user3 = [num for num in action_space_index_legal_for_user2 if num not in action_illegal_for_user3]
+        #     # user4
+        #     action_illegal_for_user4 = np.where(action_space_matrix[:, 9] != -1)[0]
+        #     action_space_index_legal_for_user4 = [num for num in action_space_index_legal_for_user3 if num not in action_illegal_for_user4]
+        #     # user5
+        #     action_illegal_for_user5 = np.where(action_space_matrix[:, 10] != -1)[0]
+        #     action_space_index_legal_for_user5 = [num for num in action_space_index_legal_for_user4 if num not in action_illegal_for_user5]
 
-            action_space_legal = np.array(action_space_index_legal_for_user5)
-            action_num = np.random.choice(action_space_legal)
-            action = action_space_matrix[action_num]
+        #     action_space_legal = np.array(action_space_index_legal_for_user5)
+        #     action_num = np.random.choice(action_space_legal)
+        #     action = action_space_matrix[action_num]
 
-        else:
-            action_space_legal, check_matrix = functions.action_choice(action_space_index_total, state, Vars.action_space_possibility)
-            action_num = np.random.choice(action_space_legal)
-            action = action_space_matrix[action_num]
-        # action = action_dist.sample()
+        # else:
+        #     action_space_legal, check_matrix = functions.action_choice(action_space_index_total, state, Vars.action_space_possibility)
+        #     action_num = np.random.choice(action_space_legal)
+        #     action = action_space_matrix[action_num]
+        action = action_dist.sample()
         # 从过滤后的动作中采样
-        action = torch.choice(action, 1)
-        return action
-        # action = action_dist.sample()
-        # return action.item()
+        # action = torch.choice(action, 1)
+        # return action
+        return action.item()
 
     def update(self, transition_dict):
         states = torch.tensor(transition_dict['states'],
