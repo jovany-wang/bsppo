@@ -43,7 +43,7 @@ def train_on_policy_agent(env, agent, num_episodes):
                 Vars.reward_list = []
                 state = env.reset()
                 done = False
-                while Vars.time<1000::
+                while Vars.time<1000:
                     action = agent.take_action(state)
                     next_state, reward, done, info = env.step(action)
                     #将next_state转换为numpy
