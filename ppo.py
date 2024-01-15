@@ -50,7 +50,7 @@ class PPO:
         self.actor_loss_plt = []
         self.critic_loss_plt = []
 
-    def take_action(self, state, info):
+    def take_action(self, state):
         # TODO: add info into model.
         # info_li = [info['time'], info['waiting_package_sizes'], info['random_nums'], info['user_coming_package_sizes']]
         # state = torch.tensor([state, info_li], dtype=torch.float).to(self.device)
