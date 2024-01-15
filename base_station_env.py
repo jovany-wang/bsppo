@@ -50,7 +50,7 @@ class BaseStationEnv(gym.Env):
 
         # self.observation_space = gym.spaces.utils.flatten_space(self.origin_obs_space)
         # self.action_space = gym.spaces.utils.flatten_space(self.origin_action_space)
-                '''
+        '''
         1. 创建action_space
         '''
         self.action_space = gym.spaces.Discrete(5135)
@@ -519,7 +519,7 @@ class BaseStationEnv(gym.Env):
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
-        def get_energy(self):
+    def get_energy(self):
         energy = self.energy_sum
         return energy
 
