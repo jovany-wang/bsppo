@@ -3,6 +3,7 @@ import numpy as np
 import torch
 import collections
 import random
+import Vars
 
 class ReplayBuffer:
     def __init__(self, capacity):
@@ -29,24 +30,46 @@ def moving_average(a, window_size):
 
 def train_on_policy_agent(env, agent, num_episodes):
     return_list = []
-    for i in range(10):
+    for i in range(1):
         with tqdm(total=int(num_episodes/10), desc='Iteration %d' % i) as pbar:
             for i_episode in range(int(num_episodes/10)):
                 episode_return = 0
-                transition_dict = {'states': [], 'actions': [], 'next_states': [], 'rewards': [], 'dones': []}
-                state, info = env.reset()
+                transition_dict = {'states': [], 'actions': [], 'next_states': [], 'rewards': [], 'dones': [], 'info': []}
+                Vars.energy_sum_plt = []
+                Vars.delay_total_plt = []
+                Vars.delay_BS0_plt = []
+                Vars.delay_BS1_plt = []
+                Vars.delay_BS2_plt = []
+                Vars.reward_list = []
+                state = env.reset()
                 done = False
-                while not done:
-                    action = agent.take_action(state, info)
+                while Vars.time<1000:
+                    action = agent.take_action(state)
                     next_state, reward, done, info = env.step(action)
+                    #将next_state转换为numpy
+                    values_list = [value for key, values in next_state.items() for value in values]
+                    next_state_narray = np.array(values_list)
+                    
                     transition_dict['states'].append(state)
                     transition_dict['actions'].append(action)
-                    transition_dict['next_states'].append(next_state)
+                    transition_dict['next_states'].append(next_state_narray)
                     transition_dict['rewards'].append(reward)
                     transition_dict['dones'].append(done)
                     transition_dict['info'].append(info)
-                    state = next_state
+                    state = next_state_narray
                     episode_return += reward
+                    #TODO
+                    print('time', Vars.time)
+                    # print('transition_dict',transition_dict['states'])
+                    energy = env.get_energy()
+                    Vars.energy_sum_plt.append(energy)
+                    delayBS0, delayBS1, delayBS2, delaytotal = env.get_delay()
+                    Vars.delay_total_plt.append(delaytotal)
+                    Vars.delay_BS0_plt.append(delayBS0)
+                    Vars.delay_BS1_plt.append(delayBS1)
+                    Vars.delay_BS2_plt.append(delayBS2)
+                    Vars.reward_list.append(reward)
+                    Vars.time +=1
                 return_list.append(episode_return)
                 agent.update(transition_dict)
                 if (i_episode+1) % 10 == 0:
